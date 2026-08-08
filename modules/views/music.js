@@ -49,7 +49,10 @@ const heroCover = h('img.vinyl-center-img', {
 });
 const heroVinyl = h('div.music-vinyl-record', {}, h('div.vinyl-grooves'), heroCover);
 const albumBadge = h('span.album-indicator-badge');
-const trackList = h('div.music-tracks-grid');
+const albumMeta = h('div.album-meta');
+const albumDots = h('div.album-dots');
+const trackList = h('div.music-tracklist');
+const tracksCount = h('span.tracks-count');
 
 const prevAlbum = h('button#btn-album-prev.btn-album-nav', {
     title: '上一张专辑',
@@ -80,47 +83,84 @@ const room = [
             ),
             heroTitle,
             heroQuote,
-            h('div.music-hero-actions', {}, playAll),
+            albumMeta,
+            h('div.music-hero-actions', {}, playAll, albumDots),
         ),
         nextAlbum,
     ),
-    h('div.music-tracks-header', {}, h('h3', {}, icon('fa-solid fa-list-ul'), ' 曲目列表')),
+    h('div.music-tracks-header', {},
+        h('h3', {}, icon('fa-solid fa-list-ul'), ' 曲目列表'),
+        tracksCount,
+    ),
     trackList,
 ];
 
-function trackCard(track, index) {
+/**
+ * One row of the tracklist.
+ *
+ * A single column, like every other list on the site, rather than a grid of
+ * cards: it puts the title, its line and its duration on one baseline and
+ * scales to an album of any length.
+ */
+function trackRow(track, index, album) {
     const playIcon = icon('fa-solid fa-play');
-    const when = track.note;
 
-    const node = h('div.music-track-card', {
+    // Three bars that animate while this track is the one playing.
+    const bars = h('span.track-bars', {}, h('i'), h('i'), h('i'));
+    const number = h('span.track-number', {}, track.number);
+    const indicator = h('div.track-index', {}, number, bars);
+
+    // The thumbnail earns its place only when the track has art of its own.
+    const ownArt = track.cover && track.cover !== album.cover;
+
+    const node = h('div.track-row', {
         dataset: { track: track.slug },
+        role: 'button',
+        tabindex: '0',
         onClick: () => (isPlaying(viewing, index) ? toggle() : play(viewing, index)),
+        onKeydown: (e) => {
+            if (e.key !== 'Enter' && e.key !== ' ') return;
+            e.preventDefault();
+            isPlaying(viewing, index) ? toggle() : play(viewing, index);
+        },
     },
-        h('span.track-num-badge', {}, `#${track.number}`),
-        h('img.track-cover-thumb', {
-            src: track.cover || PLACEHOLDER,
+        indicator,
+        ownArt ? h('img.track-cover-thumb', {
+            src: track.cover,
             alt: track.title,
-            onError: (e) => { e.target.src = PLACEHOLDER; },
-        }),
-        h('div.track-info-body', {},
+            onError: (e) => { e.target.remove(); },
+        }) : null,
+        h('div.track-main', {},
             h('div.track-title', { title: track.title }, track.title),
-            h('div.track-meta-row', {},
-                h('span.meta-item', {}, icon('fa-regular fa-user'), ` ${track.artist}`),
-                h('span.meta-item.track-duration', {}, icon('fa-regular fa-clock'), ` ${track.duration || '--:--'}`),
-            ),
-            track.quote ? h('div.track-meta-row.quote-row', {},
-                // Full text on hover, since a long quote is truncated here.
-                h('span.track-quote', { title: track.quote }, track.quote),
-            ) : null,
-            when ? h('div.track-meta-row.history-row', {},
-                h('span.meta-item.history-tag', {}, icon('fa-solid fa-location-dot'), ` ${when}`),
+            (track.quote || track.note) ? h('div.track-sub', {},
+                track.quote ? h('span.track-quote', { title: track.quote }, track.quote) : null,
+                track.note ? h('span.track-note', {}, icon('fa-solid fa-location-dot'), ` ${track.note}`) : null,
             ) : null,
         ),
-        h('button.btn-track-play', { title: '播放' }, playIcon),
+        // An unknown duration shows nothing rather than a row of dashes; it
+        // fills itself in from the audio the first time the track is played.
+        h('span.track-time', {}, track.duration || ''),
+        h('button.btn-track-play', {
+            title: '播放',
+            tabindex: '-1',
+            'aria-hidden': 'true',
+        }, playIcon),
     );
 
     cards.set(index, { node, playIcon });
     return node;
+}
+
+/** Clickable dots so you can see how many albums there are and jump to one. */
+function renderAlbumDots() {
+    fill(albumDots, albums.map((album, index) =>
+        h('button.album-dot', {
+            class: index === viewing ? 'is-current' : null,
+            title: album.title,
+            'aria-label': album.title,
+            onClick: () => { viewing = index; renderRoom(); },
+        }),
+    ));
 }
 
 function renderRoom() {
@@ -128,14 +168,23 @@ function renderRoom() {
     if (!album) return;
 
     fill(heroTitle, album.title);
-    fill(heroQuote, `“${album.summary}”`);
+    fill(heroQuote, album.summary ? `“${album.summary}”` : '');
     heroCover.src = album.cover || PLACEHOLDER;
     fill(albumBadge, `${viewing + 1} / ${albums.length}`);
+
+    fill(albumMeta, [album.year, `${album.tracks.length} 首`].filter(Boolean).join(' · '));
+    fill(tracksCount, `${album.tracks.length} 首`);
+
     prevAlbum.disabled = viewing === 0;
     nextAlbum.disabled = viewing === albums.length - 1;
+    playAll.disabled = album.tracks.length === 0;
+
+    renderAlbumDots();
 
     cards.clear();
-    fill(trackList, album.tracks.map(trackCard));
+    fill(trackList, album.tracks.length
+        ? album.tracks.map((track, index) => trackRow(track, index, album))
+        : h('div.loading-state', {}, '这张专辑还没有曲目。'));
     syncPlaybackUI();
 }
 
@@ -151,12 +200,18 @@ function syncPlaybackUI() {
     for (const [index, { node, playIcon }] of cards) {
         const current = isPlaying(viewing, index);
         node.classList.toggle('active-playing', current);
+        // The level meter only animates while sound is actually coming out.
+        node.classList.toggle('is-running', current && active);
         playIcon.className = `fa-solid ${current && active ? 'fa-pause' : 'fa-play'}`;
     }
 
     heroVinyl.classList.toggle('playing', active && playing.album === viewing);
     barVinyl.classList.toggle('playing', active);
     barPlayIcon.className = `fa-solid ${active ? 'fa-pause' : 'fa-play'}`;
+
+    if ('mediaSession' in navigator) {
+        navigator.mediaSession.playbackState = active ? 'playing' : 'paused';
+    }
 }
 
 // ==========================================================================
@@ -179,7 +234,7 @@ const volume = h('input.volume-slider', { type: 'range', min: 0, max: 1, step: 0
 const volumeIcon = icon('fa-solid fa-volume-high');
 const minimizeIcon = icon('fa-solid fa-compress');
 
-const loopButton = h('button.btn-player-ctrl', {
+const loopButton = h('button#btn-player-loop.btn-player-ctrl', {
     title: LOOP_MODES[0].title,
     onClick: () => {
         loop = (loop + 1) % LOOP_MODES.length;
@@ -220,8 +275,10 @@ const bar = h('div#global-audio-player.global-player-bar.hidden', {},
                 }, volumeIcon),
                 volume,
             ),
-            h('button.btn-player-ctrl', { title: '最小化/展开', onClick: () => setMinimized(!minimized) },
-                minimizeIcon),
+            h('button#btn-player-minimize.btn-player-ctrl', {
+                title: '最小化/展开',
+                onClick: () => setMinimized(!minimized),
+            }, minimizeIcon),
             h('button.btn-player-ctrl', {
                 title: '关闭播放器',
                 onClick: () => {
@@ -264,7 +321,42 @@ function play(albumIndex, trackIndex) {
     fill(barArtist, `${track.artist} · ${album.title}`);
     barCover.src = track.cover || PLACEHOLDER;
     bar.classList.remove('hidden');
+    publishToOs(track, album);
     syncPlaybackUI();
+}
+
+/**
+ * Hand the current track to the operating system.
+ *
+ * This is what makes the keyboard's media keys, the lock screen and the
+ * headphone buttons work — without it the browser has nothing to show.
+ */
+function publishToOs(track, album) {
+    if (!('mediaSession' in navigator)) return;
+
+    navigator.mediaSession.metadata = new MediaMetadata({
+        title: track.title,
+        artist: track.artist,
+        album: album.title,
+        artwork: [{ src: new URL(track.cover || PLACEHOLDER, location.origin).href, sizes: '512x512' }],
+    });
+
+    const handlers = {
+        play: () => audio.play().catch(() => {}),
+        pause: () => audio.pause(),
+        previoustrack: () => step(-1),
+        nexttrack: () => step(1),
+        seekbackward: () => { audio.currentTime = Math.max(0, audio.currentTime - 10); },
+        seekforward: () => { audio.currentTime = audio.currentTime + 10; },
+    };
+
+    for (const [action, handler] of Object.entries(handlers)) {
+        try {
+            navigator.mediaSession.setActionHandler(action, handler);
+        } catch {
+            // Older browsers reject actions they do not implement.
+        }
+    }
 }
 
 function toggle() {
@@ -316,8 +408,8 @@ audio.addEventListener('loadedmetadata', () => {
         track.duration = clock(audio.duration);
         if (playing.album === viewing) {
             const card = cards.get(playing.track);
-            const label = card && qs('.track-duration', card.node);
-            if (label) fill(label, icon('fa-regular fa-clock'), ` ${track.duration}`);
+            const label = card && qs('.track-time', card.node);
+            if (label) fill(label, track.duration);
         }
     }
     updateProgress();

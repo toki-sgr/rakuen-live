@@ -59,10 +59,10 @@
     --color-email:    #d93025;
 
     /* ── Radii ── */
-    --radius-sm:   8px;
-    --radius-md:   12px;
-    --radius-lg:   18px;
-    --radius-xl:   24px;
+    --radius-sm:   6px;
+    --radius-md:   10px;
+    --radius-lg:   14px;
+    --radius-xl:   16px;
     --radius-full: 9999px;
 
     /* ── Spacing scale ── */
@@ -74,25 +74,19 @@
     --space-2xl: 64px;
 
     /* ── Type scale ──
-       Fluid between a comfortable phone size and a comfortable desktop one, so
-       nothing needs a breakpoint just to change size. */
-    --text-xs:   0.75rem;
-    --text-sm:   0.8125rem;
-    --text-ui:   0.9rem;
-    --text-base: clamp(1rem, 0.97rem + 0.14vw, 1.075rem);
-    --text-lg:   clamp(1.05rem, 1rem + 0.25vw, 1.2rem);
-    --text-xl:   clamp(1.15rem, 1.05rem + 0.5vw, 1.4rem);
-    --text-2xl:  clamp(1.5rem, 1.3rem + 0.9vw, 2rem);
+       Named steps at the sizes the site has always used, so a size change is a
+       token edit rather than a hunt through the stylesheets. */
+    --text-xs:   0.72rem;
+    --text-sm:   0.78rem;
+    --text-ui:   0.88rem;
+    --text-base: 1.02rem;
+    --text-lg:   1.1rem;
+    --text-xl:   1.3rem;
+    --text-2xl:  1.75rem;
 
-    /* Chinese needs more leading than Latin to breathe. */
-    --leading-prose: 1.95;
-    --leading-tight: 1.35;
-    --leading-ui:    1.5;
-
-    /* Reading measure. 1em ≈ one CJK glyph, so this is "about 36 characters",
-       which is where a line stops being tiring to track back from. */
-    --measure:      36em;
-    --measure-wide: 44em;
+    --leading-prose: 1.88;
+    --leading-tight: 1.3;
+    --leading-ui:    1.7;
 
     /* ── Shadow ──
        Warm brown-black rather than pure black; a grey shadow on warm paper is

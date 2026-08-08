@@ -22,8 +22,7 @@ body {
     background-attachment: fixed;
     color: var(--text-primary);
     font-family: var(--font-body);
-    font-size: var(--text-base);
-    line-height: var(--leading-ui);
+    line-height: 1.7;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
@@ -101,22 +100,22 @@ h1, h2, h3, h4, h5, h6, p, label, button,
 }
 
 /* ── Reading typography ──
-   Shared by every prose surface: markdown bodies and the About page. Line
-   length is capped here rather than per-section, so nothing can drift wide. */
+   Shared by every prose surface. Text runs the full width of its pane. */
 .markdown-body,
 .prose {
     font-family: var(--font-body);
     font-size: var(--text-base);
     line-height: var(--leading-prose);
-    max-width: var(--measure);
+    width: 100%;
     color: var(--text-primary);
     /* Let long unbroken strings wrap instead of forcing a scrollbar. */
     overflow-wrap: break-word;
 }
 
+/* One rule for the gap between blocks, instead of a margin on each element. */
 .markdown-body > * + *,
 .prose > * + * {
-    margin-top: 1.4em;
+    margin-top: 1.2em;
 }
 
 .markdown-body h1,
@@ -130,7 +129,7 @@ h1, h2, h3, h4, h5, h6, p, label, button,
 
 .markdown-body h2,
 .markdown-body h3 {
-    margin-top: 2em;
+    margin-top: 1.6em;
 }
 
 .markdown-body img {

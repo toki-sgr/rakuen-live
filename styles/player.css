@@ -127,6 +127,41 @@
     margin-bottom: 8px;
 }
 
+/* Year and track count: quiet marginalia under the album's line. */
+.album-meta {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+    margin-bottom: 14px;
+}
+
+/* ── Album switcher ──
+   Dots make the shelf's size visible and let you jump straight to an album,
+   instead of arrows being the only way through. */
+.album-dots {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.album-dot {
+    width: 7px;
+    height: 7px;
+    padding: 0;
+    border: none;
+    border-radius: var(--radius-full);
+    background-color: var(--border-strong);
+    cursor: pointer;
+    transition: background-color var(--transition-fast), width var(--transition-md);
+}
+
+.album-dot:hover { background-color: var(--text-muted); }
+
+.album-dot.is-current {
+    width: 20px;
+    background-color: var(--accent-color);
+}
+
 .music-hero-quote {
     font-family: var(--font-body);
     font-size: 0.92rem;
@@ -140,12 +175,19 @@
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
 }
-
-/* Track List Grid */
+/* ==========================================================================
+   TRACK LIST
+   A single column, matching the post and chapter lists elsewhere on the site,
+   with the title, its line and its duration on one baseline.
+   ========================================================================== */
 .music-tracks-header {
-    margin-bottom: var(--space-md);
+    margin-bottom: var(--space-sm);
     border-bottom: 1px solid var(--border-color);
     padding-bottom: 8px;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-md);
 }
 
 .music-tracks-header h3 {
@@ -157,61 +199,130 @@
     gap: 8px;
 }
 
-.music-tracks-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: var(--space-md);
-    margin-bottom: 100px;
+.tracks-count {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--text-muted);
 }
 
-.music-track-card {
-    background-color: var(--bg-card);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-md);
-    padding: 14px 16px;
+.music-tracklist {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 120px;
+}
+
+.track-row {
     display: flex;
     align-items: center;
     gap: 14px;
-    transition: all var(--transition-fast);
+    padding: 11px 14px;
+    border-radius: var(--radius-md);
     cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: background-color var(--transition-fast);
 }
 
-.music-track-card:hover {
-    transform: translateY(-2px);
-    border-color: var(--accent-color);
-    box-shadow: var(--shadow-md);
+/* Rows are separated by a hairline rather than a gap, so the list reads as one
+   object; the rule disappears around the row you are pointing at. */
+.track-row::after {
+    content: '';
+    position: absolute;
+    left: 14px;
+    right: 14px;
+    bottom: 0;
+    height: 1px;
+    background-color: var(--border-color);
+    transition: opacity var(--transition-fast);
 }
 
-.music-track-card.active-playing {
-    border-color: var(--accent-color);
-    background-color: var(--accent-light);
+.track-row:last-child::after,
+.track-row:hover::after,
+.track-row.active-playing::after,
+.track-row:hover + .track-row::after,
+.track-row.active-playing + .track-row::after { opacity: 0; }
+
+/* The same sliding marker the sidebar and post lists use. */
+.track-row::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 3px;
+    height: 0;
+    border-radius: var(--radius-full);
+    background-color: var(--accent-color);
+    transform: translateY(-50%);
+    transition: height var(--transition-md);
+    z-index: 1;
 }
 
-.track-num-badge {
-    font-family: var(--font-mono);
-    font-size: 0.78rem;
-    font-weight: 600;
-    color: var(--text-muted);
-    min-width: 24px;
-    text-align: center;
+.track-row:hover { background-color: var(--accent-light); }
+.track-row:hover::before { height: 34%; }
+
+.track-row.active-playing {
+    background-color: var(--bg-card);
+    box-shadow: var(--shadow-sm);
+}
+
+.track-row.active-playing::before { height: 58%; }
+
+/* ── Index / now-playing indicator ── */
+.track-index {
     flex-shrink: 0;
+    width: 26px;
+    display: grid;
+    place-items: center;
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+}
+
+.track-index > * { grid-area: 1 / 1; }
+
+.track-bars {
+    display: none;
+    align-items: flex-end;
+    gap: 2px;
+    height: 13px;
+}
+
+.track-bars i {
+    width: 2px;
+    background-color: var(--accent-color);
+    border-radius: 1px;
+    height: 30%;
+}
+
+/* While a track plays, its number becomes a small level meter. */
+.track-row.active-playing .track-number { visibility: hidden; }
+.track-row.active-playing .track-bars { display: flex; }
+
+.track-row.active-playing.is-running .track-bars i {
+    animation: track-bar 900ms ease-in-out infinite;
+}
+
+.track-row.active-playing.is-running .track-bars i:nth-child(2) { animation-delay: 180ms; }
+.track-row.active-playing.is-running .track-bars i:nth-child(3) { animation-delay: 360ms; }
+
+@keyframes track-bar {
+    0%, 100% { height: 25%; }
+    50%      { height: 100%; }
 }
 
 .track-cover-thumb {
-    width: 52px;
-    height: 52px;
+    width: 34px;
+    height: 34px;
     border-radius: var(--radius-sm);
     object-fit: cover;
     flex-shrink: 0;
     border: 1px solid var(--border-color);
 }
 
-.track-info-body {
+/* ── Title and its line ── */
+.track-main {
     flex: 1;
     min-width: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
 }
 
 .track-title {
@@ -219,81 +330,100 @@
     font-size: 0.98rem;
     font-weight: 600;
     color: var(--text-primary);
-    line-height: 1.3;
-    white-space: nowrap;
+    line-height: 1.35;
     overflow: hidden;
     text-overflow: ellipsis;
-    margin-bottom: 2px;
+    white-space: nowrap;
 }
 
-.track-meta-row {
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    color: var(--text-muted);
+.track-row.active-playing .track-title { color: var(--accent-color-hover); }
+
+/* The line and the place sit together under the title, so the right of the row
+   holds only the duration and the play control however wide the page gets. */
+.track-sub {
     display: flex;
     align-items: center;
-    gap: 12px;
-    line-height: 1.2;
-}
-
-.track-meta-row.history-row {
-    margin-top: 1px;
-}
-
-.track-meta-row.quote-row {
-    margin-top: 1px;
-}
-
-/* A quote can be any length, so it takes the whole row and truncates rather
-   than pushing the card wider. */
-.track-quote {
+    gap: 8px;
+    margin-top: 3px;
     min-width: 0;
+}
+
+.track-quote {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+    line-height: 1.5;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
-.meta-item {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
+.track-note {
+    flex-shrink: 0;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--accent-color);
+    background-color: var(--accent-light);
+    padding: 1px 8px;
+    border-radius: var(--radius-full);
     white-space: nowrap;
 }
 
-.meta-item.history-tag {
-    color: var(--accent-color);
-    font-size: 0.72rem;
-    background: var(--accent-light);
-    padding: 1px 7px;
-    border-radius: 8px;
+.track-time {
+    flex-shrink: 0;
+    /* Reserved width keeps the play buttons in one column even when a track
+       has no duration yet. */
+    min-width: 3.2em;
+    text-align: right;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
 }
 
+/* ── Play affordance ── */
 .btn-track-play {
-    width: 34px;
-    height: 34px;
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
     border: 1px solid var(--border-color);
     background-color: var(--bg-card);
-    color: var(--text-primary);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    color: var(--text-secondary);
     cursor: pointer;
-    flex-shrink: 0;
-    transition: all var(--transition-fast);
+    display: grid;
+    place-items: center;
+    font-size: 0.72rem;
+    opacity: 0;
+    transition: opacity var(--transition-fast),
+                background-color var(--transition-fast),
+                color var(--transition-fast),
+                transform var(--transition-fast);
 }
 
-.music-track-card:hover .btn-track-play {
-    background-color: var(--accent-color);
-    color: #ffffff;
-    border-color: var(--accent-color);
+/* Quiet until you reach for it — and always present for touch, which has no
+   hover to reveal it with. */
+.track-row:hover .btn-track-play,
+.track-row:focus-visible .btn-track-play,
+.track-row.active-playing .btn-track-play { opacity: 1; }
+
+@media (hover: none) {
+    .btn-track-play { opacity: 1; }
 }
 
-.music-track-card.active-playing .btn-track-play {
+.track-row:hover .btn-track-play {
     background-color: var(--accent-color);
-    color: #ffffff;
     border-color: var(--accent-color);
+    color: #fffefb;
 }
+
+.track-row.active-playing .btn-track-play {
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+    color: #fffefb;
+}
+
+.btn-track-play:active { transform: scale(0.92); }
 
 /* ==========================================================================
    GLOBAL PERSISTENT FLOATING PLAYER BAR (#global-audio-player)
@@ -612,14 +742,29 @@
 
     .music-hero-actions {
         display: flex;
-        justify-content: center;
+        flex-direction: column;
+        align-items: center;
+        gap: 14px;
     }
 
     /* Track grid single column on mobile */
-    .music-tracks-grid {
-        grid-template-columns: 1fr;
-        margin-bottom: 140px;
+    .music-tracklist { margin-bottom: 150px; }
+
+    /* On a phone the row drops the location tag and tightens up; the title and
+       its line stay, because that is what you are choosing between. */
+    .track-row {
+        gap: 10px;
+        padding: 10px 8px;
     }
+
+    .track-row::after { left: 8px; right: 8px; }
+    .track-index { width: 20px; }
+
+    /* Narrow screens keep the line and drop the place, which is the more
+       expendable of the two. */
+    .track-sub .track-note { display: none; }
+    .track-sub:only-child .track-note,
+    .track-sub .track-note:only-child { display: inline; }
 
     /* Floating Player Bar on Mobile */
     .global-player-bar {
@@ -654,4 +799,136 @@
         width: 52px !important;
         height: 52px !important;
     }
+}
+
+/* ==========================================================================
+   PLAYER BAR REFINEMENTS
+   ========================================================================== */
+
+/* The seek bar is the control people reach for most and the hardest to hit.
+   Padding gives it a 20px-tall target while the track itself stays a hairline. */
+.player-progress-wrapper .player-seek-slider {
+    padding-block: 7px;
+    background-clip: content-box;
+    height: 20px;
+    border-radius: var(--radius-full);
+}
+
+.player-seek-slider::-webkit-slider-thumb {
+    box-shadow: 0 1px 4px rgb(var(--shadow-hue) / 0.35);
+    /* Hidden until the bar is touched, so the resting state is just a line. */
+    opacity: 0;
+    transition: opacity var(--transition-fast), transform 0.1s ease;
+}
+
+.player-progress-wrapper:hover .player-seek-slider::-webkit-slider-thumb,
+.player-seek-slider:focus-visible::-webkit-slider-thumb { opacity: 1; }
+
+@media (hover: none) {
+    .player-seek-slider::-webkit-slider-thumb { opacity: 1; }
+}
+
+.player-time { font-variant-numeric: tabular-nums; }
+
+/* The disc keeps turning while sound is coming out. */
+.player-vinyl-disc {
+    transition: transform var(--transition-md);
+}
+
+.player-track-info:hover .player-vinyl-disc { transform: scale(1.05); }
+
+/* Minimised, the bar collapses to just the disc and the title — enough to know
+   what is on and to get back. */
+.global-player-bar {
+    transition: transform var(--transition-md),
+                opacity var(--transition-md),
+                max-width var(--transition-md);
+}
+
+.global-player-bar.hidden {
+    /* Leave rather than vanish. */
+    opacity: 0;
+    transform: translate(-50%, 12px);
+}
+
+/* Album hero: the button and the dots share a line, pushed apart. */
+.music-hero-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-lg);
+    flex-wrap: wrap;
+}
+
+/* ==========================================================================
+   ALBUM PAGE & PLAYER ON SMALL SCREENS
+   Appended last so these win over the earlier mobile block.
+   ========================================================================== */
+@media (max-width: 849px) {
+    /* The dots do the switching on a phone, so the arrows — which floated over
+       the album title — are dropped rather than squeezed in. */
+    .music-hero-card .btn-album-nav { display: none; }
+
+    .music-hero-actions {
+        flex-direction: column;
+        align-items: center;
+        gap: 14px;
+    }
+
+    /* Two rows: what is playing (with the close button opposite it), then the
+       transport and its timeline. The progress bar lives inside
+       .player-controls in the markup, so the layout is built around that
+       rather than trying to place it independently. */
+    .global-player-bar {
+        bottom: calc(64px + env(safe-area-inset-bottom, 0px));
+        width: calc(100% - 20px);
+        padding: 10px 14px 12px;
+        border-radius: var(--radius-lg);
+    }
+
+    .player-container {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        grid-template-areas:
+            "info     extra"
+            "controls controls";
+        align-items: center;
+        gap: 8px 10px;
+    }
+
+    .player-track-info {
+        grid-area: info;
+        max-width: none;
+        min-width: 0;
+    }
+
+    /* The title is the point of the bar; it comes back on mobile. */
+    .player-text-details {
+        display: block;
+        min-width: 0;
+    }
+
+    .player-track-title,
+    .player-track-artist {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .player-track-title { font-size: 0.85rem; }
+    .player-track-artist { font-size: 0.72rem; }
+
+    .player-controls {
+        grid-area: controls;
+        width: 100%;
+        flex: none;
+    }
+
+    .player-extra-controls { grid-area: extra; }
+
+    /* Loop and volume belong to the system on a phone. */
+    .player-volume-wrapper,
+    #btn-player-loop,
+    #btn-player-minimize { display: none !important; }
+
+    .player-buttons { gap: 14px; }
 }

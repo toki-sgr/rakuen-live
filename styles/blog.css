@@ -183,7 +183,7 @@
     /* Quieter than a card: an empty pane should recede, not announce itself. */
     background-color: transparent;
     border: 1px dashed var(--border-color);
-    border-radius: var(--radius-xl);
+    border-radius: var(--radius-lg);
     padding: 60px 24px;
 }
 
@@ -218,21 +218,13 @@
 .blog-post-article-pane {
     background-color: var(--bg-card);
     border: 1px solid var(--border-color);
-    border-radius: var(--radius-xl);
-    /* Generous, fluid gutters: the page should feel like a printed leaf, and
-       the text column stays centred as the pane grows. */
-    padding: clamp(28px, 3.5vw, 56px) clamp(24px, 4vw, 60px);
+    border-radius: var(--radius-lg);
+    padding: 24px 32px 28px;
     box-shadow: var(--shadow-sm);
     margin-bottom: 20px;
     width: 100%;
     box-sizing: border-box;
 }
-
-/* Centre the capped text column inside a wide reading pane. */
-.blog-post-article-pane > .markdown-body,
-.blog-post-article-pane > .post-detail-header { margin-inline: auto; }
-
-.blog-post-article-pane > .post-detail-header { max-width: var(--measure); }
 
 .animate-fade-in {
     animation: content-fade-in 0.3s var(--ease-out-expo) both;
@@ -251,11 +243,10 @@
 
 .post-detail-header h1 {
     font-family: var(--font-title);
-    font-size: var(--text-2xl);
+    font-size: 1.85rem;
     font-weight: 700;
-    line-height: var(--leading-tight);
-    letter-spacing: -0.02em;
-    margin-bottom: 12px;
+    line-height: 1.3;
+    margin-bottom: var(--space-sm);
     color: var(--text-primary);
 }
 
