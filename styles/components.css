@@ -1,0 +1,213 @@
+/* ==========================================================================
+   rakuen.live — 4. COMMON COMPONENTS (Buttons, Forms, Badges)
+   ========================================================================== */
+
+/* Buttons */
+.btn-primary {
+    background-color: var(--accent-color);
+    color: var(--bg-card);
+    border: 1px solid var(--accent-color);
+    padding: var(--space-sm) var(--space-md);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-sans);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-sm);
+    transition: all var(--transition-fast);
+}
+
+.btn-primary:hover {
+    background-color: var(--accent-color-hover);
+    border-color: var(--accent-color-hover);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-sm);
+}
+
+.btn-secondary {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    padding: var(--space-sm) var(--space-md);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-sans);
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-sm);
+    transition: all var(--transition-fast);
+}
+
+.btn-secondary:hover {
+    background-color: var(--bg-input);
+    color: var(--text-primary);
+}
+
+.btn-op {
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-card);
+    padding: var(--space-xs) 10px;
+    font-size: 0.76rem;
+    font-weight: 500;
+    border-radius: var(--radius-sm);
+    color: var(--text-secondary);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all var(--transition-fast);
+}
+
+.btn-edit:hover {
+    background-color: var(--accent-light);
+    color: var(--accent-color);
+    border-color: var(--accent-color);
+}
+
+.btn-delete:hover {
+    background-color: var(--color-danger-light);
+    color: var(--color-danger);
+    border-color: var(--color-danger);
+}
+
+.btn-new-post {
+    padding: var(--space-xs) var(--space-sm);
+    font-size: 0.72rem;
+    gap: var(--space-xs);
+    border: none;
+}
+
+/* Edit mode toggle buttons */
+.btn-toggle-edit,
+.btn-toggle-edit-global {
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-card);
+    padding: var(--space-xs) 10px;
+    font-family: var(--font-sans);
+    font-size: 0.72rem;
+    font-weight: 600;
+    border-radius: var(--radius-sm);
+    color: var(--text-secondary);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all var(--transition-fast);
+}
+
+.btn-toggle-edit:hover,
+.btn-toggle-edit-global:hover {
+    background-color: var(--bg-input);
+    color: var(--text-primary);
+}
+
+.btn-toggle-edit.active-edit,
+.btn-toggle-edit-global.active-edit {
+    background-color: var(--accent-light);
+    color: var(--accent-color);
+    border-color: var(--accent-color);
+}
+
+/* Edit Mode Banner */
+.edit-mode-banner {
+    background: rgba(184, 90, 60, 0.08);
+    border: 1px solid rgba(184, 90, 60, 0.2);
+    color: var(--color-rust);
+    padding: 8px 14px;
+    border-radius: var(--radius-md);
+    font-size: 0.82rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    animation: slide-down 0.25s var(--ease-out-expo) both;
+}
+
+@keyframes slide-down {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Form Styles */
+.clean-form-pane {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: var(--space-lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    box-shadow: var(--shadow-sm);
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+    width: 100%;
+}
+
+.form-row {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+}
+
+@media (min-width: 550px) {
+    .form-row { flex-direction: row; }
+}
+
+.clean-form-pane label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    letter-spacing: 0.01em;
+}
+
+.clean-form-pane input[type="text"],
+.clean-form-pane input[type="number"],
+.clean-form-pane input[type="date"],
+.clean-form-pane textarea,
+.clean-form-pane select {
+    font-family: var(--font-sans);
+    font-size: 0.88rem;
+    color: var(--text-primary);
+    padding: var(--space-sm) 12px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-color);
+    background-color: #fcfcfc;
+    transition: border-color var(--transition-fast),
+                background-color var(--transition-fast),
+                box-shadow var(--transition-fast);
+    outline: none;
+    width: 100%;
+    appearance: none;
+    -webkit-appearance: none;
+}
+
+.clean-form-pane input:focus,
+.clean-form-pane textarea:focus,
+.clean-form-pane select:focus {
+    border-color: var(--accent-color);
+    background-color: var(--bg-card);
+    box-shadow: 0 0 0 3px rgba(78, 93, 76, 0.1);
+}
+
+.clean-form-pane textarea {
+    line-height: 1.65;
+    resize: vertical;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 5px;
+    border-top: 1px solid var(--border-color);
+    padding-top: var(--space-md);
+}

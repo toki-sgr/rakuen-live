@@ -1,0 +1,460 @@
+/* ==========================================================================
+   rakuen.live — 8. FOLIOS SECTION (Bookshelf, Cards, Reader)
+   ========================================================================== */
+
+.folios-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    flex-wrap: wrap;
+    gap: var(--space-md);
+}
+
+.folios-header-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.bookshelf-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 32px;
+    margin-top: var(--space-lg);
+}
+
+/* 3D Flip Book Card Container */
+.book-card-container {
+    perspective: 1000px;
+    height: 460px;
+    width: 100%;
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 0.45s var(--ease-out-expo), transform 0.45s var(--ease-out-expo);
+}
+
+.book-card-container.in-view {
+    opacity: 1;
+    transform: translateY(0);
+    transition-delay: 0s !important;
+}
+
+.book-card-container.reversible-card {
+    position: relative;
+}
+
+.book-card-container.reversible-card::before {
+    content: '';
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    right: -6px;
+    bottom: -6px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    z-index: -1;
+    transform: rotate(1.8deg);
+    transition: transform var(--transition-md);
+}
+
+.book-card-container.reversible-card:hover::before {
+    transform: rotate(3.2deg) translateY(-4px);
+}
+
+.book-title-highlight {
+    font-weight: 700;
+    color: var(--color-rust);
+    text-shadow: 0px 1px 0px rgba(255, 255, 255, 0.9);
+}
+
+/* Inner Flip Mechanism */
+.book-card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    transition: transform var(--transition-md);
+    cursor: pointer;
+}
+
+.book-card-front,
+.book-card-back {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    transition: transform var(--transition-slow),
+                border-color var(--transition-fast),
+                box-shadow var(--transition-fast);
+}
+
+.book-card-front { transform: rotateY(0deg); }
+.book-card-back  { transform: rotateY(180deg); }
+
+.book-card-container.flipped .book-card-front { transform: rotateY(-180deg); }
+.book-card-container.flipped .book-card-back  { transform: rotateY(0deg); }
+
+.book-card-container:not(.flipped) .book-card-back  { pointer-events: none; z-index: 1; }
+.book-card-container:not(.flipped) .book-card-front { pointer-events: auto; z-index: 3; }
+.book-card-container.flipped .book-card-front        { pointer-events: none; z-index: 1; }
+.book-card-container.flipped .book-card-back         { pointer-events: auto; z-index: 3; }
+
+.book-card-container:hover .book-card-inner {
+    transform: translateY(-6px);
+}
+
+.book-card-container:hover .book-card-front,
+.book-card-container:hover .book-card-back {
+    border-color: var(--accent-color);
+    box-shadow: var(--shadow-lg);
+}
+
+/* Cover Image Shimmer Effect */
+.book-cover-wrapper {
+    width: 100%;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+    position: relative;
+    background-color: var(--bg-input);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.book-cover-wrapper::before {
+    content: '';
+    position: absolute;
+    inset: -15px;
+    background-image: var(--cover-url);
+    background-size: cover;
+    background-position: center;
+    filter: blur(16px) brightness(0.92);
+    opacity: 0.22;
+    z-index: 0;
+}
+
+.book-cover-wrapper::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.3) 50%, transparent 60%);
+    transform: translateX(-100%);
+    transition: transform 0.6s ease;
+    z-index: 2;
+}
+
+.book-card-container:hover .book-cover-wrapper::after {
+    transform: translateX(100%);
+}
+
+.book-cover-img {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    z-index: 1;
+    position: relative;
+    box-shadow: var(--shadow-md);
+    transition: transform var(--transition-md);
+}
+
+.book-card-container:hover .book-cover-img { transform: scale(1.03); }
+
+/* Book Info Section */
+.book-info {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    height: 160px;
+    box-sizing: border-box;
+    gap: var(--space-sm);
+}
+
+.book-title {
+    font-family: var(--font-title);
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.35;
+}
+
+.book-summary {
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.5;
+    height: 3.0em;
+    margin-bottom: var(--space-sm);
+}
+
+.book-meta {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-size: 0.74rem;
+    color: var(--text-muted);
+    margin-top: auto;
+    border-top: 1px solid var(--border-color);
+    padding-top: 12px;
+    flex-wrap: wrap;
+}
+
+.book-meta span {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+}
+
+/* Status Badges */
+.book-status-badge {
+    display: inline-block;
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 0.65rem;
+    font-weight: 600;
+    margin-left: var(--space-sm);
+    vertical-align: middle;
+    letter-spacing: 0.02em;
+    line-height: 1.4;
+}
+
+.book-status-badge.serializing {
+    background-color: var(--accent-light);
+    color: var(--accent-color);
+    border: 1px solid rgba(78, 93, 76, 0.15);
+}
+
+.book-status-badge.completed {
+    background-color: var(--bg-input);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+}
+
+.book-start-year {
+    display: inline-block;
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 0.65rem;
+    font-weight: 500;
+    margin-left: var(--space-sm);
+    vertical-align: middle;
+    letter-spacing: 0.02em;
+    line-height: 1.4;
+    background-color: var(--bg-input);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+    font-family: var(--font-mono);
+}
+
+/* Reader Bar & Navigation */
+.reader-header-bar {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 10px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+}
+
+.btn-folios-back,
+.btn-chapter-drawer-toggle {
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-card);
+    padding: 6px 14px;
+    font-size: 0.82rem;
+    font-weight: 500;
+    font-family: var(--font-sans);
+    border-radius: var(--radius-sm);
+    color: var(--text-secondary);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    height: 32px;
+    line-height: 1;
+    transition: all var(--transition-fast);
+    flex-shrink: 0;
+    box-shadow: var(--shadow-xs);
+}
+
+.btn-folios-back:hover,
+.btn-chapter-drawer-toggle:hover {
+    background-color: var(--bg-input);
+    color: var(--text-primary);
+    border-color: var(--accent-color);
+}
+
+.reader-novel-title {
+    font-family: var(--font-title);
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    flex: 1;
+}
+
+.reader-novel-ops {
+    display: flex;
+    gap: var(--space-sm);
+}
+
+.folios-split-container {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+@media (min-width: 850px) {
+    .folios-split-container {
+        display: grid;
+        grid-template-columns: 300px 1fr;
+        gap: var(--space-lg);
+        height: 100%;
+    }
+}
+
+.folios-sidebar-list {
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 20px;
+    width: 100%;
+}
+
+@media (min-width: 850px) {
+    .folios-sidebar-list {
+        border-bottom: none;
+        padding-bottom: 0;
+        border-right: 1px solid var(--border-color);
+        padding-right: var(--space-md);
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+}
+
+.folios-main-pane {
+    flex: 1;
+    min-height: 400px;
+}
+
+@media (min-width: 850px) {
+    .folios-main-pane {
+        height: 100%;
+        overflow-y: auto;
+        padding-right: var(--space-sm);
+    }
+}
+
+.chapter-nav-buttons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+    padding-top: 14px;
+    border-top: 1px dashed var(--border-color);
+    gap: 12px;
+    padding-bottom: 0;
+}
+
+.chapter-nav-buttons button {
+    min-width: auto;
+    padding: 5px 14px;
+    font-size: 0.8rem;
+    height: 32px;
+    line-height: 1;
+    border-radius: var(--radius-sm);
+    justify-content: center;
+    box-shadow: var(--shadow-xs);
+}
+
+/* Floating Edit Mode Action Buttons on Cards */
+.book-card-actions {
+    position: absolute;
+    bottom: 12px;
+    right: 12px;
+    display: flex;
+    gap: var(--space-sm);
+    z-index: 6;
+}
+
+.book-card-actions button {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1px solid var(--border-color);
+    background-color: rgba(255, 255, 255, 0.95);
+    color: var(--text-primary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    box-shadow: var(--shadow-sm);
+    transition: all var(--transition-fast);
+    outline: none;
+}
+
+.book-card-actions .btn-card-edit:hover {
+    background-color: var(--accent-color);
+    color: #fff;
+    border-color: var(--accent-color);
+    transform: scale(1.08);
+}
+
+.book-card-actions .btn-card-delete:hover {
+    background-color: var(--color-danger);
+    color: #fff;
+    border-color: var(--color-danger);
+    transform: scale(1.08);
+}
+
+.book-card-flip-action {
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
+    z-index: 6;
+}
+
+.btn-card-flip {
+    height: 32px;
+    border-radius: 20px;
+    border: 1px solid var(--border-color);
+    background-color: rgba(255, 255, 255, 0.95);
+    color: var(--text-secondary);
+    font-family: var(--font-sans);
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 0 12px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: var(--shadow-sm);
+    transition: all var(--transition-fast);
+    outline: none;
+}
+
+.btn-card-flip:hover {
+    background-color: var(--accent-color);
+    color: #fff;
+    border-color: var(--accent-color);
+    transform: scale(1.05);
+}

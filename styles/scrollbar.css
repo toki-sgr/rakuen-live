@@ -1,0 +1,49 @@
+/* ==========================================================================
+   rakuen.live — 11. UNIFIED SCROLLBARS
+   ========================================================================== */
+
+:is(
+    .posts-list-small,
+    .blog-main-pane,
+    .folios-main-pane,
+    #section-hub,
+    #section-about,
+    #folios-bookshelf-view
+)::-webkit-scrollbar {
+    width: 5px;
+}
+
+:is(
+    .posts-list-small,
+    .blog-main-pane,
+    .folios-main-pane,
+    #section-hub,
+    #section-about,
+    #folios-bookshelf-view
+)::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+:is(
+    .posts-list-small,
+    .blog-main-pane,
+    .folios-main-pane,
+    #section-hub,
+    #section-about,
+    #folios-bookshelf-view
+)::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.08);
+    border-radius: 3px;
+    transition: background-color var(--transition-fast);
+}
+
+:is(
+    .posts-list-small,
+    .blog-main-pane,
+    .folios-main-pane,
+    #section-hub,
+    #section-about,
+    #folios-bookshelf-view
+):hover::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.22);
+}

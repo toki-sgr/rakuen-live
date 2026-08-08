@@ -1,0 +1,147 @@
+/* ==========================================================================
+   rakuen.live — 12. MOBILE ADAPTATION (≤849px)
+   ========================================================================== */
+
+@media (max-width: 849px) {
+    .site-wrapper {
+        padding: 20px 16px;
+        gap: 16px;
+    }
+
+    /* Hide desktop-only elements */
+    .tab-nav-vertical,
+    .sidebar-image-wrapper,
+    .sidebar-footer {
+        display: none !important;
+    }
+
+    .site-sidebar,
+    .sidebar-sticky {
+        display: block;
+    }
+
+    .sidebar-header {
+        text-align: center;
+        border-bottom: none;
+        padding-bottom: 6px;
+    }
+
+    .header-logo a {
+        justify-content: center;
+    }
+
+    /* Fixed Glassmorphic Mobile Bottom Tab Bar */
+    .mobile-tab-bar {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 999;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        background: var(--glass-bg);
+        backdrop-filter: var(--glass-blur);
+        -webkit-backdrop-filter: var(--glass-blur);
+        border-top: 1px solid var(--border-color);
+        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.05);
+        padding: 8px 0 calc(8px + env(safe-area-inset-bottom, 0px));
+        height: calc(56px + env(safe-area-inset-bottom, 0px));
+    }
+
+    .mobile-tab {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2px;
+        border: none;
+        background: none;
+        color: var(--text-muted);
+        font-size: 0.68rem;
+        font-family: var(--font-sans);
+        font-weight: 500;
+        cursor: pointer;
+        transition: color var(--transition-fast);
+        padding: 4px 0;
+    }
+
+    .mobile-tab i {
+        font-size: 1.15rem;
+    }
+
+    .mobile-tab.active {
+        color: var(--accent-color);
+        font-weight: 600;
+    }
+
+    /* Padding for main container to clear bottom Tab Bar */
+    .site-main {
+        padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px));
+    }
+
+    /* Reader Sticky Header Bar on Mobile */
+    .reader-header-bar {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        background: var(--glass-bg-subtle);
+        backdrop-filter: var(--glass-blur);
+        -webkit-backdrop-filter: var(--glass-blur);
+        margin-left: -16px;
+        margin-right: -16px;
+        padding: 10px 16px;
+        border-bottom: 1px solid var(--border-color);
+        margin-bottom: var(--space-md);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: nowrap;
+    }
+
+    .reader-novel-title {
+        font-size: 0.92rem;
+        font-weight: 600;
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        max-width: 50%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        margin: 0;
+        text-align: center;
+    }
+
+    .btn-folios-back,
+    .btn-chapter-drawer-toggle {
+        padding: 5px 12px;
+        font-size: 0.78rem;
+        height: 30px;
+        line-height: 1;
+    }
+
+    .reader-novel-ops {
+        margin-left: auto;
+    }
+
+    .folios-split-container {
+        display: block;
+    }
+
+    .folios-sidebar-list {
+        display: none !important;
+    }
+
+    .blog-post-article-pane {
+        padding: 20px 18px 30px;
+    }
+
+    .about-card {
+        padding: 24px 20px;
+    }
+}
+
+@media (min-width: 850px) {
+    .mobile-tab-bar { display: none !important; }
+}
