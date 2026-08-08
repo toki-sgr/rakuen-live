@@ -107,15 +107,21 @@ export function createBookshelf(handlers) {
         grid,
     );
 
-    let novels = [];
+    // null until fetched — an empty shelf is a real answer.
+    let novels = null;
+    let observer = null;
 
     const paint = () => {
-        if (!novels.length) {
+        // Cards from the previous paint are gone; stop watching them.
+        if (observer) observer.disconnect();
+
+        if (!novels || !novels.length) {
             fill(grid, empty('书架目前空空如也。', '.loading-state-grid'));
             return;
         }
+
         // Stagger the entrance as cards scroll into view.
-        const observer = new IntersectionObserver((entries, obs) => {
+        observer = new IntersectionObserver((entries, obs) => {
             for (const entry of entries) {
                 if (!entry.isIntersecting) continue;
                 entry.target.classList.add('in-view');
@@ -133,18 +139,28 @@ export function createBookshelf(handlers) {
 
     return {
         root,
+
         setEditVisible(editing) {
             newButton.classList.toggle('hidden', !editing);
-            paint();
+            if (novels) paint();
         },
-        async refresh() {
+
+        /** Fetch once; returning to the shelf reuses what is already loaded. */
+        async ensure({ force = false } = {}) {
+            if (novels && !force) {
+                paint();
+                return;
+            }
             fill(grid, loading('正在加载书架...', '.loading-state-grid'));
             try {
                 novels = await api.books.list();
                 paint();
             } catch {
+                novels = null;
                 fill(grid, failed('加载书架失败', '.loading-state-grid'));
             }
         },
+
+        invalidate() { novels = null; },
     };
 }

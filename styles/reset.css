@@ -10,15 +10,23 @@
 html {
     text-size-adjust: 100%;
     -webkit-text-size-adjust: 100%;
+    /* Deliberately not `scroll-behavior: smooth`: opening a chapter resets the
+       pane to the top, and that should be instant, not a glide. */
 }
 
 body {
-    background-color: var(--bg-main);
+    /* A very slight fall from top to bottom, so a full screen of paper is not
+       one flat fill. */
+    background-color: var(--paper);
+    background-image: linear-gradient(180deg, var(--paper) 0%, var(--paper-deep) 100%);
+    background-attachment: fixed;
     color: var(--text-primary);
-    font-family: var(--font-title);
-    line-height: 1.7;
+    font-family: var(--font-body);
+    font-size: var(--text-base);
+    line-height: var(--leading-ui);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -42,11 +50,27 @@ a {
 }
 
 button, input, textarea, select {
-    font-family: var(--font-title);
+    font-family: var(--font-body);
+    font-size: inherit;
+    color: inherit;
 }
 
 code, pre, var, kbd, samp {
     font-family: var(--font-mono);
+}
+
+::selection {
+    background: var(--accent-tint);
+    color: var(--text-primary);
+}
+
+/* ── Focus ──
+   One visible ring for everything reachable by keyboard. Pointer users never
+   see it; keyboard users never lose their place. */
+:focus-visible {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 3px;
+    border-radius: var(--radius-sm);
 }
 
 /* Utility: hidden state */
@@ -76,11 +100,23 @@ h1, h2, h3, h4, h5, h6, p, label, button,
     letter-spacing: -0.01em;
 }
 
-/* ── Markdown Body Reading Typography ── */
-.markdown-body {
-    font-family: var(--font-title);
-    font-size: 1.05rem;
-    line-height: 1.88;
+/* ── Reading typography ──
+   Shared by every prose surface: markdown bodies and the About page. Line
+   length is capped here rather than per-section, so nothing can drift wide. */
+.markdown-body,
+.prose {
+    font-family: var(--font-body);
+    font-size: var(--text-base);
+    line-height: var(--leading-prose);
+    max-width: var(--measure);
+    color: var(--text-primary);
+    /* Let long unbroken strings wrap instead of forcing a scrollbar. */
+    overflow-wrap: break-word;
+}
+
+.markdown-body > * + *,
+.prose > * + * {
+    margin-top: 1.4em;
 }
 
 .markdown-body h1,
@@ -88,4 +124,25 @@ h1, h2, h3, h4, h5, h6, p, label, button,
 .markdown-body h3,
 .markdown-body h4 {
     font-family: var(--font-title);
+    line-height: var(--leading-tight);
+    letter-spacing: -0.015em;
+}
+
+.markdown-body h2,
+.markdown-body h3 {
+    margin-top: 2em;
+}
+
+.markdown-body img {
+    max-width: 100%;
+    height: auto;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+}
+
+/* Wide content must scroll inside itself, never widen the page. */
+.markdown-body pre,
+.markdown-body table {
+    max-width: 100%;
+    overflow-x: auto;
 }

@@ -64,6 +64,10 @@ export function createReader(handlers) {
         onDelete: () => handlers.onDeleteChapter(novel, chapter),
     });
 
+    // A hairline under the header showing how far into the chapter you are.
+    const progressFill = h('div.reading-progress-fill');
+    const progress = h('div.reading-progress', {}, progressFill);
+
     const root = h('div#folios-reader-view.hidden', {},
         h('div.reader-header-bar', {},
             h('button.btn-folios-back', { onClick: () => go('folios') },
@@ -75,6 +79,8 @@ export function createReader(handlers) {
             }, icon('fa-solid fa-list-ul'), ' 目录'),
             ops,
         ),
+        // Sits directly above what it measures.
+        progress,
         pane.root,
     );
 
@@ -109,10 +115,19 @@ export function createReader(handlers) {
         return nodes;
     }
 
-    function paintChapters() {
-        const nodes = novel.chapter_count ? chapterNodes() : [empty('暂无章节')];
-        fill(pane.list, nodes);
-        fill(drawerList, novel.chapter_count ? chapterNodes() : [empty('暂无章节')]);
+    // The index only changes when the book does, so it is built once per book
+    // rather than twice per chapter click.
+    let paintedFor = null;
+
+    function paintChapters(force = false) {
+        if (!force && paintedFor === novel.slug) {
+            highlight();
+            return;
+        }
+        const build = () => (novel.chapter_count ? chapterNodes() : [empty('暂无章节')]);
+        fill(pane.list, build());
+        fill(drawerList, build());
+        paintedFor = novel.slug;
         highlight();
     }
 
@@ -170,7 +185,50 @@ export function createReader(handlers) {
         article.setOpsVisible(isEditing());
         article.reveal();
         highlight();
+        // reveal() returns to the top; recompute once the new body has laid out.
+        requestAnimationFrame(updateProgress);
     }
+
+    // -- reading progress -------------------------------------------------
+    /** Whichever element is actually scrolling: the pane on desktop, the page on mobile. */
+    function scroller() {
+        const main = document.querySelector('.folios-main-pane');
+        if (main && main.scrollHeight - main.clientHeight > 4) return main;
+        return document.scrollingElement || document.documentElement;
+    }
+
+    let progressQueued = false;
+    function updateProgress() {
+        if (progressQueued) return;
+        progressQueued = true;
+        requestAnimationFrame(() => {
+            progressQueued = false;
+            const el = scroller();
+            const travel = el.scrollHeight - el.clientHeight;
+            const ratio = travel > 4 ? Math.min(1, Math.max(0, el.scrollTop / travel)) : 0;
+            progressFill.style.transform = `scaleX(${ratio})`;
+        });
+    }
+
+    document.addEventListener('scroll', updateProgress, { passive: true, capture: true });
+    window.addEventListener('resize', updateProgress, { passive: true });
+
+    // -- keyboard ---------------------------------------------------------
+    const TYPING = new Set(['INPUT', 'TEXTAREA', 'SELECT']);
+
+    document.addEventListener('keydown', (e) => {
+        if (root.classList.contains('hidden') || !chapter) return;
+        if (e.metaKey || e.ctrlKey || e.altKey) return;
+        if (TYPING.has(document.activeElement?.tagName) || document.activeElement?.isContentEditable) return;
+
+        const target = e.key === 'ArrowLeft' ? chapter.prev
+            : e.key === 'ArrowRight' ? chapter.next
+                : undefined;
+        if (target === undefined || target === null) return;
+
+        e.preventDefault();
+        go(...chapterHash(novel.slug, chapter.volume, target));
+    });
 
     // -- entry point -----------------------------------------------------
     async function open(novelSlug, wantedVolume, num) {
@@ -221,8 +279,14 @@ export function createReader(handlers) {
         pane,
         open,
         setEditVisible,
-        reset() { novel = null; chapter = null; volumeSlug = ''; hide(root); },
+        reset() {
+            novel = null;
+            chapter = null;
+            volumeSlug = '';
+            paintedFor = null;
+            hide(root);
+        },
         current: () => ({ novel, chapter, volumeSlug }),
-        refresh: () => { novel = null; },
+        refresh: () => { novel = null; paintedFor = null; },
     };
 }

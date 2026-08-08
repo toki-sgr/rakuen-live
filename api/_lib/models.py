@@ -79,12 +79,36 @@ class Collection(object):
     def names(self):
         return store.entries(self.root)
 
+    # Resolving a slug means reading every entry's index.md. That is once per
+    # request per collection, so the result is memoised against the directory's
+    # modification time: edits invalidate it, reads never pay for it twice.
+    _slug_cache = None
+
+    def _slug_map(self):
+        try:
+            stamp = os.stat(self.root).st_mtime_ns
+        except OSError:
+            return {}
+
+        cached = self._slug_cache
+        if cached and cached[0] == stamp:
+            return cached[1]
+
+        mapping = {self._slug_of(name): name for name in self.names()}
+        type(self)._slug_cache = (stamp, mapping)
+        return mapping
+
     def locate(self, slug):
         """Directory (or file) name backing a slug."""
-        for name in self.names():
-            if self._slug_of(name) == slug:
-                return name
-        raise NotFound(self.missing)
+        name = self._slug_map().get(slug)
+        if name is None:
+            # A new entry inside an existing directory does not change the
+            # root's mtime, so confirm a miss against the filesystem.
+            for candidate in self.names():
+                if self._slug_of(candidate) == slug:
+                    return candidate
+            raise NotFound(self.missing)
+        return name
 
     def exists(self, slug):
         try:

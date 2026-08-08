@@ -8,11 +8,14 @@
     backdrop-filter: var(--glass-blur);
     -webkit-backdrop-filter: var(--glass-blur);
     border: 1px solid var(--border-color);
-    border-radius: var(--radius-lg);
-    padding: 40px;
+    border-radius: var(--radius-xl);
+    /* Capped so the prose inside cannot run to a tiring line length, with the
+       page's own margin doing the rest. */
+    max-width: calc(var(--measure) + 12rem);
+    padding: clamp(28px, 4vw, 52px);
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 28px;
     box-shadow: var(--shadow-sm);
 }
 
@@ -63,18 +66,22 @@
 }
 
 .about-body-text {
-    padding-left: 0;
+    max-width: var(--measure);
 }
 
 .about-body-text p {
     color: var(--text-secondary);
-    font-size: 0.95rem;
-    margin-bottom: 18px;
-    line-height: 1.75;
-    text-align: justify;
+    font-size: var(--text-base);
+    line-height: var(--leading-prose);
 }
 
-.about-body-text p:last-child { margin-bottom: 0; }
+.about-body-text p + p { margin-top: 1.35em; }
+
+/* The opening line is the greeting; give it a little more presence. */
+.about-body-text p:first-child {
+    color: var(--text-primary);
+    font-size: var(--text-lg);
+}
 .about-body-text strong { color: var(--text-primary); }
 
 .about-actions {

@@ -458,3 +458,36 @@
     border-color: var(--accent-color);
     transform: scale(1.05);
 }
+
+/* ── Reading progress ──
+   A hairline at the top of the reader showing how far into the chapter you
+   are. It is decoration, not a control, so it stays out of the a11y tree. */
+.reading-progress {
+    height: 2px;
+    border-radius: var(--radius-full);
+    background-color: transparent;
+    overflow: hidden;
+    margin-bottom: 6px;
+}
+
+.reading-progress-fill {
+    height: 100%;
+    width: 100%;
+    transform: scaleX(0);
+    transform-origin: left center;
+    background: linear-gradient(90deg, var(--accent-color), var(--color-rust));
+    transition: transform 0.12s linear;
+}
+
+/* ── Keyboard hint ──
+   Shown only to people who are actually using the keyboard to move around. */
+.chapter-nav-buttons kbd {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--text-faint);
+    border: 1px solid var(--border-color);
+    border-bottom-width: 2px;
+    border-radius: var(--radius-sm);
+    padding: 1px 5px;
+    margin: 0 2px;
+}

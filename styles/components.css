@@ -229,3 +229,58 @@
     font-size: 0.68rem;
     margin-right: 3px;
 }
+
+/* ── Touch targets & press feedback ──
+   Buttons get a real minimum height so they are comfortable on a phone, and a
+   small settle on press so a tap feels acknowledged. */
+.btn-primary,
+.btn-secondary {
+    min-height: 38px;
+    border-radius: var(--radius-md);
+    letter-spacing: 0.01em;
+}
+
+.btn-primary:active,
+.btn-secondary:active,
+.btn-op:active,
+.about-btn:active {
+    transform: translateY(1px);
+    transition-duration: 0.05s;
+}
+
+.btn-op { border-radius: var(--radius-sm); }
+
+/* Disabled controls should look unavailable, not broken. */
+button:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+/* ── Form fields ──
+   A focused field gets a soft ring in the accent rather than a hard outline. */
+.clean-form-pane input,
+.clean-form-pane textarea,
+.clean-form-pane select {
+    border-radius: var(--radius-md);
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.clean-form-pane input:focus,
+.clean-form-pane textarea:focus,
+.clean-form-pane select:focus {
+    box-shadow: 0 0 0 3px var(--accent-light);
+}
+
+/* The field is already the focus indicator; no second ring on top of it. */
+.clean-form-pane input:focus-visible,
+.clean-form-pane textarea:focus-visible,
+.clean-form-pane select:focus-visible {
+    outline: none;
+}
+
+.clean-form-pane label {
+    font-size: var(--text-sm);
+    letter-spacing: 0.02em;
+    color: var(--text-secondary);
+}

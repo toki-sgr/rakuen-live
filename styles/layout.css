@@ -203,27 +203,53 @@
 @media (min-width: 850px) {
     .tab-nav-vertical .nav-tab {
         width: 100%;
-        padding: 10px 14px;
+        padding: 11px 14px;
         border-radius: var(--radius-md);
-        border: 1px solid transparent;
+        overflow: hidden;
+    }
+
+    /* The marker is a pseudo-element so it can slide in rather than appearing
+       as a hard border, and so the label never shifts. */
+    .tab-nav-vertical .nav-tab::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 50%;
+        width: 3px;
+        height: 0;
+        border-radius: var(--radius-full);
+        background-color: var(--accent-color);
+        transform: translateY(-50%);
+        transition: height var(--transition-md);
     }
 
     .tab-nav-vertical .nav-tab:hover {
         color: var(--text-primary);
-        background-color: rgba(0, 0, 0, 0.025);
-        transform: translateX(3px);
+        background-color: var(--accent-light);
     }
+
+    .tab-nav-vertical .nav-tab:hover::before { height: 40%; }
 
     .tab-nav-vertical .nav-tab.active {
         color: var(--accent-color-hover);
         background-color: var(--bg-card);
         font-weight: 600;
-        border-color: var(--border-color);
-        border-left: 3px solid var(--accent-color);
-        box-shadow: var(--shadow-sm);
-        transform: translateX(0);
+        box-shadow: var(--shadow-xs);
     }
+
+    .tab-nav-vertical .nav-tab.active::before { height: 62%; }
 }
+
+/* Icons sit at a steady width so the labels line up in a column. */
+.tab-nav-vertical .nav-tab i {
+    width: 1.05em;
+    text-align: center;
+    color: var(--text-muted);
+    transition: color var(--transition-fast);
+}
+
+.tab-nav-vertical .nav-tab:hover i,
+.tab-nav-vertical .nav-tab.active i { color: var(--accent-color); }
 
 /* Sidebar Footer */
 .sidebar-footer {
@@ -248,21 +274,25 @@
 /* Main Content Area Header */
 .site-main { width: 100%; }
 
-.section-header { margin-bottom: 35px; }
+.section-header { margin-bottom: var(--space-xl); }
 
 .section-header h2 {
     font-family: var(--font-title);
-    font-size: 1.75rem;
+    font-size: var(--text-2xl);
     font-weight: 700;
-    margin-bottom: var(--space-sm);
+    line-height: var(--leading-tight);
+    letter-spacing: -0.02em;
+    margin-bottom: 10px;
     color: var(--text-primary);
 }
 
 .section-subtitle {
     font-family: var(--font-body);
-    font-size: 0.95rem;
+    font-size: var(--text-ui);
     color: var(--text-secondary);
-    line-height: 1.6;
+    line-height: 1.75;
+    /* The subtitle is a sentence, not a banner — keep it readable. */
+    max-width: var(--measure-wide);
 }
 
 /* Tab Section Panel Fade In */

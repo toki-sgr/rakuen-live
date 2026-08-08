@@ -80,6 +80,7 @@ async function saveNovel(payload, slug) {
             ? await api.books.update(slug, payload)
             : await api.books.create(payload);
         toast(slug ? '作品已成功更新' : '作品已成功创建', 'success');
+        bookshelf.invalidate();
         reader.refresh();
         go('folios', saved.slug, saved.volumes[0].slug);
     } catch (err) {
@@ -94,6 +95,7 @@ async function removeNovel(novel) {
     try {
         await api.books.remove(novel.slug);
         toast('作品已成功删除', 'success');
+        bookshelf.invalidate();
         reader.reset();
         go('folios');
     } catch (err) {
@@ -130,6 +132,7 @@ async function saveChapter(values, chapter) {
             ? await api.chapters.update(novel.slug, chapter.number, payload)
             : await api.chapters.create(novel.slug, payload);
         toast(chapter ? '章节已成功更新' : '章节已成功保存', 'success');
+        bookshelf.invalidate();
         reader.refresh();
         go(...['folios', novel.slug, saved.volume, saved.number].filter(Boolean));
     } catch (err) {
@@ -144,6 +147,7 @@ async function removeChapter(novel, chapter) {
     try {
         await api.chapters.remove(novel.slug, chapter.number, chapter.volume);
         toast('章节已成功删除', 'success');
+        bookshelf.invalidate();
         reader.refresh();
         go(...['folios', novel.slug, chapter.volume].filter(Boolean));
     } catch (err) {
@@ -178,7 +182,7 @@ export default {
         if (!slug) {
             reader.reset();
             showScreen('shelf');
-            bookshelf.refresh();
+            bookshelf.ensure();
             return;
         }
 

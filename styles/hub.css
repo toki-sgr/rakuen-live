@@ -22,15 +22,27 @@
     backdrop-filter: var(--glass-blur);
     -webkit-backdrop-filter: var(--glass-blur);
     border: 1px solid var(--border-color);
-    border-radius: var(--radius-lg);
-    padding: var(--space-lg);
+    border-radius: var(--radius-xl);
+    padding: var(--space-lg) var(--space-lg) 20px;
     display: flex;
     flex-direction: column;
     position: relative;
     overflow: hidden;
-    transition: border-color var(--transition-fast),
-                transform var(--transition-fast),
-                box-shadow var(--transition-fast);
+    transition: border-color var(--transition-md),
+                transform var(--transition-md),
+                box-shadow var(--transition-md);
+}
+
+/* A warm wash that rises from the bottom on hover — the card lights up rather
+   than just lifting. */
+.link-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, transparent 40%, var(--accent-light) 100%);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--transition-md);
 }
 
 .link-card:hover {
@@ -38,6 +50,15 @@
     transform: translateY(-4px);
     box-shadow: var(--shadow-lg);
 }
+
+.link-card:hover::after { opacity: 1; }
+
+/* The arrow leans toward where it is taking you. */
+.link-card .card-link-text i {
+    transition: transform var(--transition-md);
+}
+
+.link-card:hover .card-link-text i { transform: translateX(4px); }
 
 .disabled-card {
     opacity: 0.75;
@@ -125,7 +146,7 @@
     color: var(--text-secondary);
     padding-left: 12px;
     margin: 0 0 var(--space-lg) 0;
-    font-family: var(--font-serif);
+    font-family: var(--font-title);
     font-style: italic;
     font-size: 0.88rem;
     line-height: 1.55;

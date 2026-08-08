@@ -27,7 +27,8 @@ const FIELDS = [
     { name: 'content', label: '内容 (Markdown) *', type: 'textarea', rows: 14, placeholder: '使用 Markdown 语法书写正文内容...' },
 ];
 
-let cached = [];
+// null until the index has been fetched — an empty array is a real answer.
+let cached = null;
 let active = null;
 
 const pane = createSplitPane({
@@ -67,18 +68,26 @@ function listItem(post) {
     );
 }
 
-async function loadList() {
+/**
+ * Fetch and render the index once, then reuse it.
+ *
+ * Navigating between posts used to refetch the whole list and rebuild every
+ * row, which also threw away the list's scroll position.
+ */
+async function ensureList({ force = false } = {}) {
+    if (cached && !force) return cached;
+
     try {
         cached = await api.posts.list();
-        if (!cached.length) {
-            pane.list.replaceChildren(empty('暂无随笔。'));
-            return;
-        }
-        renderItems(pane.list, cached, listItem);
-        markActive(pane.list, (data) => data.slug === (active && active.slug));
     } catch {
         pane.list.replaceChildren(failed('加载列表失败'));
+        return null;
     }
+
+    if (!cached.length) pane.list.replaceChildren(empty('暂无随笔。'));
+    else renderItems(pane.list, cached, listItem);
+
+    return cached;
 }
 
 // --------------------------------------------------------------------------
@@ -143,7 +152,7 @@ async function submit() {
             ? await api.posts.update(active.slug, payload)
             : await api.posts.create(payload);
         toast(active ? '随笔已更新' : '随笔已创建', 'success');
-        await loadList();
+        await ensureList({ force: true });
         go('blog', saved.slug);
     } catch (err) {
         toast(`保存随笔失败：${err.message}`, 'error');
@@ -158,6 +167,7 @@ async function removePost() {
         await api.posts.remove(active.slug);
         toast('随笔已成功删除', 'success');
         active = null;
+        await ensureList({ force: true });
         go('blog');
     } catch (err) {
         toast(`删除随笔失败：${err.message}`, 'error');
@@ -178,13 +188,23 @@ export default {
 
     render: () => pane.root,
 
-    route([slug]) {
-        loadList();
+    async route([slug]) {
+        const posts = await ensureList();
+
         if (slug) {
             openPost(slug);
-        } else {
-            active = null;
-            pane.showEmpty();
+            return;
         }
+
+        // Landing on the section with nothing chosen used to show a "pick
+        // something on the left" placeholder — a dead end on a first visit.
+        // Open the most recent piece instead and let the reader start reading.
+        if (posts && posts.length) {
+            go('blog', posts[0].slug);
+            return;
+        }
+
+        active = null;
+        pane.showEmpty();
     },
 };
