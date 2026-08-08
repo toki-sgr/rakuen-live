@@ -12,11 +12,24 @@ import { failed, loading } from '../components/states.js';
 import { sections } from '../../data/site.js';
 
 const PLACEHOLDER = '/assets/ruined_library.png';
+
+// Font Awesome Free has no repeat-one glyph, so the loop with a 1 inside it is
+// drawn here rather than approximated with a different icon.
+const REPEAT_ONE = `
+<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+  <path fill="currentColor" d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z"/>
+  <path fill="currentColor" d="M13 15V9h-1l-2 1v1h1.5v4H13z"/>
+</svg>`;
+
 const LOOP_MODES = [
     { id: 'all', icon: 'fa-solid fa-repeat', title: '循环模式: 列表循环', highlight: false },
-    { id: 'one', icon: 'fa-solid fa-rotate-right', title: '循环模式: 单曲循环', highlight: true },
+    { id: 'one', svg: REPEAT_ONE, title: '循环模式: 单曲循环', highlight: true },
     { id: 'shuffle', icon: 'fa-solid fa-shuffle', title: '循环模式: 随机播放', highlight: true },
 ];
+
+/** A loop mode's glyph, whether it comes from the icon font or from above. */
+const loopGlyph = (mode) =>
+    mode.svg ? h('span.player-glyph', { html: mode.svg }) : icon(mode.icon);
 
 const audio = new Audio();
 audio.preload = 'metadata';
@@ -241,9 +254,9 @@ const loopButton = h('button#btn-player-loop.btn-player-ctrl', {
         const mode = LOOP_MODES[loop];
         loopButton.title = mode.title;
         loopButton.classList.toggle('active-loop', mode.highlight);
-        fill(loopButton, icon(mode.icon));
+        fill(loopButton, loopGlyph(mode));
     },
-}, icon(LOOP_MODES[0].icon));
+}, loopGlyph(LOOP_MODES[0]));
 
 const bar = h('div#global-audio-player.global-player-bar.hidden', {},
     h('div.player-container', {},
@@ -380,7 +393,14 @@ function step(direction) {
     play(playing.album, (playing.track + direction + count) % count);
 }
 
-audio.addEventListener('play', syncPlaybackUI);
+audio.addEventListener('play', () => {
+    // Closing the bar only dismisses it; anything that starts sound again
+    // brings it back, including the same track, the media keys and autoplay
+    // of the next track.
+    bar.classList.remove('hidden');
+    syncPlaybackUI();
+});
+
 audio.addEventListener('pause', syncPlaybackUI);
 
 audio.addEventListener('error', () => {

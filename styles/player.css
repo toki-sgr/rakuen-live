@@ -925,10 +925,27 @@
 
     .player-extra-controls { grid-area: extra; }
 
-    /* Loop and volume belong to the system on a phone. */
-    .player-volume-wrapper,
-    #btn-player-loop,
-    #btn-player-minimize { display: none !important; }
+    /* Only the volume slider goes; the phone's own volume keys cover it.
+       Loop and minimise stay — they have no system equivalent. */
+    .player-volume-wrapper { display: none !important; }
 
-    .player-buttons { gap: 14px; }
+    .player-buttons { gap: 12px; }
+
+    .player-extra-controls { gap: 4px; }
+}
+
+
+/* ── Hand-drawn glyphs ──
+   Sized and coloured like the icon-font glyphs beside them, so a mixed row of
+   the two lines up. */
+.player-glyph {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.player-glyph svg {
+    width: 1.05em;
+    height: 1.05em;
+    display: block;
 }
