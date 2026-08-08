@@ -95,6 +95,15 @@ def unique_slug(base_slug, exists_fn):
 def index():
     return send_from_directory('..', 'index.html')
 
+@app.route('/folios/<path:filename>')
+def serve_folios(filename):
+    return send_from_directory(NOVELS_DIR, filename)
+
+@app.route('/assets/<path:filename>')
+def serve_assets(filename):
+    assets_dir = os.path.join(BASE_DIR, 'assets')
+    return send_from_directory(assets_dir, filename)
+
 @app.route('/api/auth', methods=['POST'])
 def verify_auth():
     data = request.json or {}
