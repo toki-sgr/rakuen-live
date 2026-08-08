@@ -7,8 +7,14 @@
     gap: 20px;
 }
 
+/* Column counts are keyed to the space left beside the 240px sidebar, so a
+   card never drops below roughly 260px wide. */
 @media (min-width: 700px) {
     .grid-container { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (min-width: 1180px) {
+    .grid-container { grid-template-columns: repeat(3, 1fr); }
 }
 
 .hub-card {

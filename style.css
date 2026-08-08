@@ -3,6 +3,9 @@
    Post-Apocalyptic Widescreen Sanctuary Console Design System
    ========================================================================== */
 
+/* Code block theme, bundled alongside highlight.js itself. */
+@import 'highlight.js/styles/github.css';
+
 @import './styles/tokens.css';
 @import './styles/reset.css';
 @import './styles/layout.css';
@@ -13,5 +16,6 @@
 @import './styles/folios.css';
 @import './styles/modal.css';
 @import './styles/toast.css';
+@import './styles/player.css';
 @import './styles/scrollbar.css';
 @import './styles/mobile.css';

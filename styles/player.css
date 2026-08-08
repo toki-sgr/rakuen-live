@@ -1,0 +1,657 @@
+/* ==========================================================================
+   styles/player.css — 「星火倾斜」 Music Pavilion & Floating Player Bar
+   ========================================================================== */
+
+/* Music Pavilion Hero Header & Album Switcher */
+.music-hero-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: var(--space-lg);
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin-bottom: var(--space-xl);
+    box-shadow: var(--shadow-sm);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-album-nav {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1px solid var(--border-color);
+    background: var(--bg-card);
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: all var(--transition-fast);
+    box-shadow: var(--shadow-xs);
+}
+
+.btn-album-nav:hover {
+    background: var(--bg-input);
+    color: var(--text-primary);
+    border-color: var(--accent-color);
+}
+
+.btn-album-nav:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.music-vinyl-wrapper {
+    flex-shrink: 0;
+    width: 168px;
+    height: 168px;
+}
+
+.music-vinyl-record {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: radial-gradient(circle, #1a1a1a 0%, #2a2a2a 40%, #111111 100%);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    border: 3px solid #333;
+}
+
+.music-vinyl-record.playing {
+    animation: vinyl-spin 12s linear infinite;
+}
+
+@keyframes vinyl-spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+}
+
+.vinyl-grooves {
+    position: absolute;
+    inset: 10px;
+    border-radius: 50%;
+    border: 1px dashed rgba(255, 255, 255, 0.15);
+}
+
+.vinyl-center-img {
+    /* Proportional, so the label keeps its ratio to the record at every size. */
+    width: 62%;
+    height: 62%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--border-color);
+    z-index: 2;
+}
+
+.music-hero-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.music-tag-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.music-tag {
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    color: var(--accent-color);
+    background-color: var(--accent-light);
+    padding: 3px 10px;
+    border-radius: 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.album-indicator-badge {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--text-muted);
+}
+
+.music-hero-info h3 {
+    font-family: var(--font-title);
+    font-size: 1.55rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+}
+
+.music-hero-quote {
+    font-family: var(--font-body);
+    font-size: 0.92rem;
+    font-style: italic;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 16px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+}
+
+/* Track List Grid */
+.music-tracks-header {
+    margin-bottom: var(--space-md);
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 8px;
+}
+
+.music-tracks-header h3 {
+    font-family: var(--font-title);
+    font-size: 1.15rem;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.music-tracks-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: var(--space-md);
+    margin-bottom: 100px;
+}
+
+.music-track-card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    transition: all var(--transition-fast);
+    cursor: pointer;
+}
+
+.music-track-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--accent-color);
+    box-shadow: var(--shadow-md);
+}
+
+.music-track-card.active-playing {
+    border-color: var(--accent-color);
+    background-color: var(--accent-light);
+}
+
+.track-num-badge {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    min-width: 24px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.track-cover-thumb {
+    width: 52px;
+    height: 52px;
+    border-radius: var(--radius-sm);
+    object-fit: cover;
+    flex-shrink: 0;
+    border: 1px solid var(--border-color);
+}
+
+.track-info-body {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.track-title {
+    font-family: var(--font-title);
+    font-size: 0.98rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    line-height: 1.3;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 2px;
+}
+
+.track-meta-row {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    line-height: 1.2;
+}
+
+.track-meta-row.history-row {
+    margin-top: 1px;
+}
+
+.track-meta-row.quote-row {
+    margin-top: 1px;
+}
+
+/* A quote can be any length, so it takes the whole row and truncates rather
+   than pushing the card wider. */
+.track-quote {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.meta-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    white-space: nowrap;
+}
+
+.meta-item.history-tag {
+    color: var(--accent-color);
+    font-size: 0.72rem;
+    background: var(--accent-light);
+    padding: 1px 7px;
+    border-radius: 8px;
+}
+
+.btn-track-play {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-card);
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: all var(--transition-fast);
+}
+
+.music-track-card:hover .btn-track-play {
+    background-color: var(--accent-color);
+    color: #ffffff;
+    border-color: var(--accent-color);
+}
+
+.music-track-card.active-playing .btn-track-play {
+    background-color: var(--accent-color);
+    color: #ffffff;
+    border-color: var(--accent-color);
+}
+
+/* ==========================================================================
+   GLOBAL PERSISTENT FLOATING PLAYER BAR (#global-audio-player)
+   ========================================================================== */
+.global-player-bar {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100% - 40px);
+    max-width: 900px;
+    z-index: 9000;
+    background: rgba(255, 255, 255, 0.94);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--border-color);
+    border-radius: 40px;
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.12);
+    padding: 10px 24px;
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dark-theme .global-player-bar {
+    background: rgba(26, 26, 26, 0.94);
+}
+
+.global-player-bar.hidden {
+    display: none !important;
+}
+
+/* --- Minimized Floating Pill Circle --- */
+.global-player-bar.minimized {
+    left: auto !important;
+    right: 24px !important;
+    bottom: 24px !important;
+    transform: none !important;
+    max-width: 56px !important;
+    width: 56px !important;
+    height: 56px !important;
+    padding: 0 !important;
+    border-radius: 50% !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25) !important;
+    cursor: pointer !important;
+    overflow: hidden !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.global-player-bar.minimized .player-container {
+    width: 100% !important;
+    height: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    gap: 0 !important;
+}
+
+.global-player-bar.minimized .player-controls,
+.global-player-bar.minimized .player-extra-controls,
+.global-player-bar.minimized .player-text-details {
+    display: none !important;
+}
+
+.global-player-bar.minimized .player-track-info {
+    min-width: 0 !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    height: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.global-player-bar.minimized .player-vinyl-disc {
+    width: 100% !important;
+    height: 100% !important;
+    border-radius: 50% !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.player-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+/* Player Track Info */
+.player-track-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 160px;
+    max-width: 220px;
+}
+
+.player-vinyl-disc {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+    border: 2px solid var(--border-color);
+    box-shadow: var(--shadow-xs);
+}
+
+.player-vinyl-disc.playing img {
+    animation: vinyl-spin 10s linear infinite;
+}
+
+.player-vinyl-disc img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.player-text-details {
+    min-width: 0;
+}
+
+.player-track-title {
+    font-family: var(--font-title);
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.player-track-artist {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--text-muted);
+}
+
+/* Player Controls & Seek Slider */
+.player-controls {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    max-width: 480px;
+}
+
+.player-buttons {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.btn-player-ctrl {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    cursor: pointer;
+    padding: 6px;
+    transition: color var(--transition-fast);
+}
+
+.btn-player-ctrl:hover {
+    color: var(--text-primary);
+}
+
+.btn-player-ctrl.active-loop {
+    color: var(--accent-color);
+}
+
+.btn-player-play {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: var(--accent-color);
+    color: #ffffff;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 0.95rem;
+    box-shadow: var(--shadow-sm);
+    transition: transform var(--transition-fast), background-color var(--transition-fast);
+}
+
+.btn-player-play:hover {
+    transform: scale(1.05);
+}
+
+.player-progress-wrapper {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.player-time {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    min-width: 36px;
+    text-align: center;
+}
+
+/* Interactive Seek Slider with Dynamic Accent Fill */
+.player-seek-slider {
+    flex: 1;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 6px;
+    background: linear-gradient(to right, var(--accent-color) 0%, var(--accent-color) var(--seek-percent, 0%), var(--border-color) var(--seek-percent, 0%), var(--border-color) 100%);
+    border-radius: 3px;
+    cursor: pointer;
+    outline: none;
+    margin: 0;
+    transition: background 0.05s ease;
+}
+
+.player-seek-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--accent-color);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+    cursor: grab;
+    transition: transform 0.1s ease;
+}
+
+.player-seek-slider:hover::-webkit-slider-thumb {
+    transform: scale(1.2);
+}
+
+.player-seek-slider::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--accent-color);
+    border: none;
+    cursor: grab;
+}
+
+/* Extra Controls (Volume, Minimize, Close) */
+.player-extra-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.player-volume-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.volume-slider {
+    width: 65px;
+    accent-color: var(--accent-color);
+    cursor: pointer;
+}
+
+/* ==========================================================================
+   MOBILE MUSIC ADAPTATIONS (≤849px)
+   ========================================================================== */
+@media (max-width: 849px) {
+    /* Album Hero Card: Stack vertically, shrink vinyl */
+    .music-hero-card {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 16px;
+        padding: 16px;
+        text-align: center;
+    }
+
+    .music-hero-card .btn-album-nav {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 2;
+    }
+
+    #btn-album-prev { left: 8px; }
+    #btn-album-next { right: 8px; }
+
+    .music-vinyl-wrapper {
+        width: 120px;
+        height: 120px;
+        margin: 0 auto;
+    }
+
+    .music-hero-info {
+        text-align: center;
+    }
+
+    .music-tag-row {
+        justify-content: center;
+    }
+
+    .music-hero-info h3 {
+        font-size: 1.2rem;
+    }
+
+    .music-hero-quote {
+        font-size: 0.82rem;
+        -webkit-line-clamp: 2;
+        margin-bottom: 10px;
+    }
+
+    .music-hero-actions {
+        display: flex;
+        justify-content: center;
+    }
+
+    /* Track grid single column on mobile */
+    .music-tracks-grid {
+        grid-template-columns: 1fr;
+        margin-bottom: 140px;
+    }
+
+    /* Floating Player Bar on Mobile */
+    .global-player-bar {
+        bottom: 68px;
+        width: calc(100% - 24px);
+        padding: 8px 14px;
+        border-radius: 30px;
+    }
+
+    .player-track-info {
+        min-width: 0;
+        max-width: 120px;
+    }
+
+    .player-text-details {
+        display: none;
+    }
+
+    .player-volume-wrapper {
+        display: none !important;
+    }
+
+    .player-buttons {
+        gap: 8px;
+    }
+
+    /* Minimized pill on mobile — align perfectly above mobile tab bar */
+    .global-player-bar.minimized {
+        bottom: 74px !important;
+        right: 16px !important;
+        max-width: 52px !important;
+        width: 52px !important;
+        height: 52px !important;
+    }
+}

@@ -211,3 +211,21 @@
     border-top: 1px solid var(--border-color);
     padding-top: var(--space-md);
 }
+
+/* Confirmation dialog — replaces the inline styles the old markup carried. */
+.confirm-message {
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--text-primary);
+}
+
+.btn-primary.btn-danger {
+    background-color: var(--color-danger);
+    border-color: var(--color-danger);
+}
+
+.post-item-date i {
+    font-size: 0.68rem;
+    margin-right: 3px;
+}
