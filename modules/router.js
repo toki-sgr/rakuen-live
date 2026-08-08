@@ -38,9 +38,9 @@ export function handleHashRouting() {
 
         } else if (parts.length === 2) {
             const second = parts[1];
-            if (/^\d+$/.test(second)) {
+            if (/^\d+(\.\d+)?$/.test(second)) {
                 // #folios/{novelSlug}/{chapterNum}
-                loadChapterDetail(novelSlug, parseInt(second, 10), null);
+                loadChapterDetail(novelSlug, second, null);
             } else {
                 // #folios/{novelSlug}/{sideSlug}
                 loadNovelDetail(novelSlug, null, second);
@@ -49,7 +49,7 @@ export function handleHashRouting() {
         } else if (parts.length === 3) {
             // #folios/{novelSlug}/{sideSlug}/{chapterNum}
             const sideSlug   = parts[1];
-            const chapterNum = parseInt(parts[2], 10);
+            const chapterNum = parts[2];
             loadChapterDetail(novelSlug, chapterNum, sideSlug);
         }
 

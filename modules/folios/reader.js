@@ -270,10 +270,10 @@ export function loadChapterDetail(novelSlug, chapterNum, sideSlug = null) {
     if (metaEl)    metaEl.textContent  = '';
     if (contentEl) contentEl.innerHTML = `<div class="loading-state"><i class="fa-solid fa-spinner fa-spin"></i> 正在读取章节正文...</div>`;
 
-    qsa('#folios-chapters-list .post-item-small').forEach(item => {
-        const itemNum  = parseInt(item.getAttribute('data-chapter-num'), 10);
+    qsa('#folios-chapters-list .post-item-small, #chapter-drawer-list .post-item-small').forEach(item => {
+        const itemNum  = item.getAttribute('data-chapter-num');
         const itemSide = item.getAttribute('data-side') || null;
-        const match = itemNum === chapterNum && (!sideSlug || !itemSide || itemSide === sideSlug);
+        const match = String(itemNum) === String(chapterNum) && (!sideSlug || !itemSide || itemSide === sideSlug);
         item.classList.toggle('active', match);
     });
 
